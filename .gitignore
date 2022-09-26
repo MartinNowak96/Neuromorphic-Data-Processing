@@ -42,3 +42,6 @@ var/
 # Keep all files in example_plots and nn_examples directories
 !examples/example_plots/*
 !examples/nn_examples/*
+
+# files needed for testing
+!tests/test_data/*

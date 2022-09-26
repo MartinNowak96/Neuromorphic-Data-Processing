@@ -1,14 +1,11 @@
 import csv
 import os
-from os import walk
 from os import listdir
 from os.path import isfile, join
-import numpy as np
 import json
 import itertools
 from typing import List
 import sys
-import math
 from types import FunctionType
 
 class EventChunkConfig:
@@ -100,11 +97,11 @@ class SpatialCsvData():
         if polarity_as_bool:
             self.__polarity_storage_callbacks.append(self.__store_polarity_bool)
 
-    def __store_polarity_bool(self, timestamp):
-        self.polarities.append(timestamp)
+    def __store_polarity_bool(self, polarity):
+        self.polarities.append(polarity)
 
-    def __store_polarity_color(self, timestamp):
-        self.polarities_color.append('g' if timestamp == 1 else 'r')
+    def __store_polarity_color(self, polarity):
+        self.polarities_color.append('g' if polarity == 1 else 'r')
 
     def from_csv(csv_file: str, polarity_as_bool: bool, polarity_as_color: bool,
                  time_limit: int = sys.maxsize):
@@ -162,17 +159,18 @@ def read_aedat_csv(csv_path: str, timeWindow: int, maxSize: int = -1) -> CsvData
     with open(csv_path, 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         header = next(reader, None)  # Grab header
-        
+
         # Make sure CSV is the correct format
         for entry in header:
             if 'count' not in entry.lower():
-                raise ValueError(f"CSV may not be the correct format.\nHeader entries should indicate that the columns contain event counts")
+                raise ValueError("CSV may not be the correct format.\n"
+                                 "Header entries should indicate that the columns contain event counts")
 
         for i, row in enumerate(reader):
             x.append((i-1) * timeWindow * 0.000001)
-            #TODO: If timewindow is large this will not work
+            # TODO: If timewindow is large this will not work
             # also machineLearning Get data might need this fix for outliers
-            if int(row[2]) > 8000: # If camera bugs out and registers too many events, use like data instead
+            if int(row[2]) > 8000:  # If camera bugs out and registers too many events, use like data instead
                 y_on.append(sum(y_on)/len(y_on))
                 y_off.append(sum(y_off)/len(y_off))
                 y_all.append(sum(y_all)/len(y_all))
@@ -188,22 +186,25 @@ def read_aedat_csv(csv_path: str, timeWindow: int, maxSize: int = -1) -> CsvData
 
 def getEventChunkData(folderName: str):
     points = []
-    onlyfiles = [f for f in listdir("./eventChunkData/" +folderName) if isfile(join("./eventChunkData/" + folderName, f))]
+    onlyfiles = [
+        f for f in listdir("./eventChunkData/" + folderName) if isfile(join("./eventChunkData/" + folderName, f))]
+
     for file in onlyfiles:
-        with open('./eventChunkData/'+folderName+"/" +file, 'r') as csvfile:
-            
+        with open('./eventChunkData/'+folderName+"/" + file, 'r') as csvfile:
+
             reader = csv.reader(csvfile, delimiter=',')
             for i, row in enumerate(reader):
                 if i != 0:
                     points.append([int(row[1]), 128-int(row[2])])
-            
-        return points       
+
+        return points
+
 
 def parseConfig(location: str = 'plotting/config.json', data_folder=None) -> EventChunkConfig:
     config_json = json.loads(open(location).read())
     config = EventChunkConfig()
-    for i,key in  enumerate(config_json.keys()):
-        setattr(config, key, config_json[key]) #assign all properties in json to config object
+    for i, key in enumerate(config_json.keys()):
+        setattr(config, key, config_json[key])  # Assign all properties in json to config object
 
     # HACK
     if data_folder:
