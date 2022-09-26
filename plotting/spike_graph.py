@@ -68,7 +68,7 @@ def get_args():
         if args.global_area:
             sys.exit(f"{sys.argv[0]}: error: Global area arguments conflict with Local area arguments")
         elif not (args.pixel_x and args.pixel_y and args.area_size):
-            sys.exit(f"{sys.argv[0]}: error: pixel_x, pixel_y, and area_size \n"
+            sys.exit(f"{sys.argv[0]}: error: pixel_x, pixel_y, and area_size "
                      "must all be set when using Local area arguments")
 
     pixel_x = args.pixel_x
@@ -194,4 +194,7 @@ if __name__ == '__main__':
     else:
         plot_file_name = f'spike_Plot-{file_name}_X-{pixel_x}_Y-{pixel_y}_Area-{area_size}.png'
 
-    plt.savefig(os.path.join(save_directory, plot_file_name, bbox_inches='tight', pad_inches=0.1))
+    plt.savefig(
+        os.path.join(save_directory, plot_file_name),
+        bbox_inches='tight',
+        pad_inches=0.1)
