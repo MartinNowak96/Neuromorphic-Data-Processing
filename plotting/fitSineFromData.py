@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.optimize import leastsq
 import pylab as plt
-import getPlottingData
+import plotting_utils.get_plotting_data as get_plotting_data
 from scipy.signal import savgol_filter
 
 
@@ -11,7 +11,7 @@ f = 1.15247 # Optional!! Advised not to use
 #data = 3.0*np.sin(f*t+0.001) + 0.5 + np.random.randn(N) # create artificial data with noise
 
 # FIXME: no longer works due to changes in getData (getData changed to read_aedat_csv)
-on,off,all2, N,x= getPlottingData.getData()
+on,off,all2, N,x= get_plotting_data.getData()
 yhat = savgol_filter(off, 51, 3)
 data = np.array(yhat)
 t = np.linspace(0, 4*np.pi, N)

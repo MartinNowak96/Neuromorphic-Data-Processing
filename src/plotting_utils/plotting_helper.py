@@ -9,7 +9,7 @@ from pylab import plot, xlabel, ylabel
 from scipy import fft, arange
 import re
 
-import getPlottingData
+import plotting_utils.get_plotting_data as get_plotting_data
 
 
 class FileNameRegex():
@@ -148,7 +148,7 @@ def plotKmeans(data, axes, row, columnIndex, numberOfCenters):
     axes[row][columnIndex].scatter(centers[:, 0], centers[:, 1], c='red')
 
 
-def centerAllGuas(lines: List[matplotlib.lines.Line2D], axes_index: int, labels: List[str], title: str, axes: np.ndarray, config: getPlottingData.EventChunkConfig):
+def centerAllGuas(lines: List[matplotlib.lines.Line2D], axes_index: int, labels: List[str], title: str, axes: np.ndarray, config: get_plotting_data.EventChunkConfig):
     labels_copy = np.copy(labels)
 
     max_height_pol = 0  # Get the largest y value in all the polarized lines
@@ -222,7 +222,7 @@ def centerAllGuas(lines: List[matplotlib.lines.Line2D], axes_index: int, labels:
     axes[axes_index][1].set_ylim(config.gaussianMinY, config.gaussianMaxY + 0.05)
 
 
-def showAllGuas(lines: List[matplotlib.lines.Line2D], labels: List[str], axes_index: int, title: str, axes: np.ndarray, config: getPlottingData.EventChunkConfig):
+def showAllGuas(lines: List[matplotlib.lines.Line2D], labels: List[str], axes_index: int, title: str, axes: np.ndarray, config: get_plotting_data.EventChunkConfig):
     labels_copy = np.copy(labels)
     max_height = 0
 

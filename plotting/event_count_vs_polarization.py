@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter, AutoMinorLocator
 import argparse
 import os
-from plotting_helper import FileNameRegex
+from plotting_utils.plotting_helper import FileNameRegex
 from natsort import natsorted
 import pandas as pd
 import tqdm

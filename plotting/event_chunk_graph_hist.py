@@ -11,12 +11,13 @@ import matplotlib.pyplot as plt
 import matplotlib
 from natsort import natsorted, ns
 
-import getPlottingData
-from getPlottingData import CsvData
-import plotting_helper
+import plotting_utils.get_plotting_data as get_plotting_data
+from plotting_utils.get_plotting_data import CsvData
+
+import plotting_utils.plotting_helper as plotting_helper
 
 
-def get_args() -> getPlottingData.EventChunkConfig:
+def get_args() -> get_plotting_data.EventChunkConfig:
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
     required_args = parser.add_argument_group('required unless using a config file')
@@ -96,14 +97,14 @@ def get_args() -> getPlottingData.EventChunkConfig:
         if not os.path.isfile(args.config):
             parser.error(f'argument --config/-c: provided file {args.config} does not exist')
 
-        return getPlottingData.parseConfig(args.config, args.data_folder)
+        return get_plotting_data.parseConfig(args.config, args.data_folder)
 
     # TODO: custom type like with gaussian min and max?
     if args.max_event_count <= 0:
         parser.error(f'argument --max_event_count/-mc: invalid value: {args.max_event_count} '
                      '(must be greater than 0)')
 
-    return getPlottingData.EventChunkConfig(
+    return get_plotting_data.EventChunkConfig(
         args.graph_type, args.data_folder, not args.show_figures, args.plot_variance,
         args.fwhm_multiplier, args.log_values, args.plot_fwhm, args.data_set_type,
         args.plot_constant, args.max_event_count, args.reconstruction_window,
@@ -286,7 +287,7 @@ csv_paths = glob.glob(os.path.join('data', config.dataFolder, '**/*.csv'), recur
 csv_paths = natsorted(csv_paths, alg=ns.IGNORECASE)
 
 for csv_path in csv_paths:
-    d: CsvData = getPlottingData.read_aedat_csv(csv_path,
+    d: CsvData = get_plotting_data.read_aedat_csv(csv_path,
                                                 config.reconstructionWindow,
                                                 config.maxEventCount)
 

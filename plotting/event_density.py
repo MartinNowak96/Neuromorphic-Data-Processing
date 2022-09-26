@@ -1,7 +1,7 @@
 import csv
 from itertools import islice
 import matplotlib.pyplot as plt
-from plotting_helper import FileNameRegex
+from plotting_utils.plotting_helper import FileNameRegex
 import argparse
 import os
 import sys

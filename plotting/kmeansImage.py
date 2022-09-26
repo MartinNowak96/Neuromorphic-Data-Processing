@@ -1,7 +1,7 @@
 
 from sklearn.metrics import pairwise_distances_argmin
 import numpy as np
-import getPlottingData
+import plotting_utils.get_plotting_data as get_plotting_data
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 import os
@@ -30,7 +30,7 @@ folders = os.listdir("eventChunkData/")
 number_of_centers =4
 
 for folder in folders:
-    data = getPlottingData.getEventChunkData(folder)
+    data = get_plotting_data.getEventChunkData(folder)
     pts = np.asarray(data)
     centers, labels = find_clusters(pts,number_of_centers)
     plt.scatter(pts[:, 0], pts[:, 1], c=labels, s=10, cmap='viridis')

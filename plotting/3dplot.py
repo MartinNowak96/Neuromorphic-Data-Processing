@@ -12,7 +12,7 @@ import sys
 
 import matplotlib.pyplot as plt
 
-import getPlottingData
+import plotting_utils.get_plotting_data as get_plotting_data
 
 file_to_plot = ''
 view = None
@@ -59,9 +59,9 @@ if __name__ == '__main__':
     get_args()
 
     if time_limit is None:
-        events = getPlottingData.SpatialCsvData.from_csv(file_to_plot, False, True)
+        events = get_plotting_data.SpatialCsvData.from_csv(file_to_plot, False, True)
     else:
-        events = getPlottingData.SpatialCsvData.from_csv(file_to_plot, False, True, time_limit)
+        events = get_plotting_data.SpatialCsvData.from_csv(file_to_plot, False, True, time_limit)
 
     fig = plt.figure()
     fig.set_size_inches(12, 10)

@@ -14,7 +14,7 @@ import itertools
 import re
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-from plotting_helper import check_aedat_csv_format, FileNameRegex
+from plotting_utils.plotting_helper import check_aedat_csv_format, FileNameRegex
 
 file_to_plot = ''
 time_limit = math.inf

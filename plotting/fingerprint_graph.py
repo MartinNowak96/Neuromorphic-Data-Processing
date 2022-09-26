@@ -12,9 +12,9 @@ import argparse
 import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
-import getPlottingData
-from getPlottingData import CsvData
-from plotting_helper import FileNameRegex
+import plotting_utils.get_plotting_data as get_plotting_data
+from plotting_utils.plotting_helper import CsvData
+from plotting_utils.plotting_helper import FileNameRegex
 
 file_to_plot = ''
 x_lim = None
@@ -59,7 +59,7 @@ def get_args():
             quit("The argument reconstruction window must be greater than 0")
 
         if os.path.exists(args.reconstruction_window) and args.reconstruction_window.endswith(".json"):
-            config = getPlottingData.parseConfig(args.reconstruction_window)
+            config = get_plotting_data.parseConfig(args.reconstruction_window)
             reconstruction_window = config.reconstructionWindow
         else:
             quit(f"The path {args.reconstruction_window} does not point to a json file")
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     max_csv_entries = int((x_lim * 1000000) / reconstruction_window) if x_lim is not None else -1
 
-    plot_data: CsvData = getPlottingData.read_aedat_csv(file_to_plot,
+    plot_data: CsvData = get_plotting_data.read_aedat_csv(file_to_plot,
                                                         reconstruction_window,
                                                         max_csv_entries)
 
