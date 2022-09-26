@@ -12,43 +12,6 @@ import re
 import plotting_utils.get_plotting_data as get_plotting_data
 
 
-class FileNameRegex():
-    def parse_frequency(input_str: str, append_if_found: str = "") -> str:
-        frequency = re.search("[0-9]{1,} ?[H|h][Z|z]", input_str)
-        return frequency.group() + append_if_found if frequency else ""
-
-    def parse_voltage(input_str: str, append_if_found: str = "") -> str:
-        voltage = re.search("(\d+(?:\.\d+)?) ?v", input_str)
-        return voltage.group() + append_if_found if voltage else ""
-
-    def parse_waveform(input_str: str, append_if_found: str = "") -> str:
-        waveform = re.search("(burst|sine|square|triangle|noise)", input_str, re.IGNORECASE)
-        return waveform.group() + append_if_found if waveform else ""
-
-    def parse_degrees(input_str: str, append_if_found: str = "") -> str:
-        degrees = re.search("[0-9]{1,} ?deg", input_str, re.IGNORECASE)
-
-        if degrees:
-            degrees = re.search("[0-9]{1,}", degrees.group()).group()
-            return degrees + append_if_found
-        else:
-            return ""
-
-    def parse_slots(input_str: str, append_if_found: str = "") -> str:
-        slots = re.search("[0-9]{1,}sl", input_str, re.IGNORECASE)
-        return slots.group() + append_if_found if slots else ""
-
-    def parse_threshold(input_str: str, append_if_found: str = "") -> str:
-        threshold = re.search("m?[0-9]{1,}t(hreshold)?", input_str, re.IGNORECASE)
-
-        if threshold:
-            threshold = re.search("m?[0-9]{1,}", threshold.group()).group()
-            threshold = threshold.replace("m", "-")
-            return threshold + append_if_found
-        else:
-            return ""
-
-
 class FloatRangeArg(object):
     def __init__(self, min, max):
         self.min = min

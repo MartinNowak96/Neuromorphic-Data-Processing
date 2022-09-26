@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter, AutoMinorLocator
 import argparse
 import os
-from plotting_utils.plotting_helper import FileNameRegex
+from plotting_utils import filename_regex
 from natsort import natsorted
 import pandas as pd
 import tqdm
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         if not os.path.isdir(os.path.join(csv_folder, current_folder)):
             continue
 
-        hz = FileNameRegex.parse_frequency(current_folder)
+        hz = filename_regex.parse_frequency(current_folder, "Hz")
 
         if hz == "":
             if debug_info:
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
             full_csv_path = os.path.join(csv_folder, current_folder, csv_filename)
 
-            degrees = FileNameRegex.parse_degrees(csv_filename)
+            degrees = filename_regex.parse_degrees(csv_filename)
 
             if degrees == "":
                 if debug_info:

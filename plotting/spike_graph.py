@@ -14,7 +14,8 @@ import itertools
 import re
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-from plotting_utils.plotting_helper import check_aedat_csv_format, FileNameRegex
+from plotting_utils.plotting_helper import check_aedat_csv_format
+from plotting_utils import filename_regex
 
 file_to_plot = ''
 time_limit = math.inf
@@ -130,14 +131,14 @@ def get_activity_area(csv_file, pixel_x: int, pixel_y: int, area_size: int, max_
 
 
 def auto_generate_title(file_name: str) -> str:
-    hz = FileNameRegex.parse_frequency(file_name, " ")
-    voltage = FileNameRegex.parse_voltage(file_name, " ")
-    waveform_type = FileNameRegex.parse_waveform(file_name, " ")
+    hz = filename_regex.parse_frequency(file_name, "Hz ")
+    voltage = filename_regex.parse_voltage(file_name, "V ")
+    waveform_type = filename_regex.parse_waveform(file_name, " ")
 
     if re.search('no ?pol', file_name, re.IGNORECASE):
         auto_title = f"{waveform_type}{voltage}{hz}Unpolarized"
     else:
-        degrees = FileNameRegex.parse_degrees(file_name, " Degrees Polarized")
+        degrees = filename_regex.parse_degrees(file_name, " Degrees Polarized")
         auto_title = f"{waveform_type}{voltage}{hz}{degrees}"
 
     return auto_title

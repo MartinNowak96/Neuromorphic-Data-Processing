@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import plotting_utils.get_plotting_data as get_plotting_data
 from plotting_utils.plotting_helper import CsvData
-from plotting_utils.plotting_helper import FileNameRegex
+from plotting_utils import filename_regex
 
 file_to_plot = ''
 x_lim = None
@@ -107,10 +107,10 @@ if __name__ == '__main__':
 
     file_name = os.path.basename(file_to_plot)
 
-    hz = FileNameRegex.parse_frequency(file_name, " ")
-    voltage = FileNameRegex.parse_voltage(file_name, " ")
-    waveform_type = FileNameRegex.parse_waveform(file_name, " ")
-    degrees = FileNameRegex.parse_degrees(file_name, " Degrees Polarized")
+    hz = filename_regex.parse_frequency(file_name, "Hz ")
+    voltage = filename_regex.parse_voltage(file_name, "V ")
+    waveform_type = filename_regex.parse_waveform(file_name, " ")
+    degrees = filename_regex.parse_degrees(file_name, " Degrees Polarized")
 
     if hz == "" and degrees == "":
         print("WARNING: Could not infer polarizer angle or frequency from file name")

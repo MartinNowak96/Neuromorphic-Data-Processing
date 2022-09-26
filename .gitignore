@@ -8,6 +8,9 @@ venv/
 *.tif
 imageData/
 
+# pytest files
+.coverage
+
 # Data files
 *.npy
 *.csv

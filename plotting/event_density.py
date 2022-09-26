@@ -1,7 +1,7 @@
 import csv
 from itertools import islice
 import matplotlib.pyplot as plt
-from plotting_utils.plotting_helper import FileNameRegex
+from plotting_utils import filename_regex
 import argparse
 import os
 import sys
@@ -107,10 +107,10 @@ if __name__ == "__main__":
     plt.title('Temporal Resoltion')
     plt.xlabel('Time(mS)')
 
-    hz = FileNameRegex.parse_frequency(csv_filename, "_")
-    voltage = FileNameRegex.parse_voltage(csv_filename, "_")
-    waveform_type = FileNameRegex.parse_waveform(csv_filename, "_")
-    degrees = FileNameRegex.parse_degrees(csv_filename, "_DegreesPolarized")
+    hz = filename_regex.parse_frequency(csv_filename, "Hz_")
+    voltage = filename_regex.parse_voltage(csv_filename, "V_")
+    waveform_type = filename_regex.parse_waveform(csv_filename, "_")
+    degrees = filename_regex.parse_degrees(csv_filename, "_DegreesPolarized")
 
     # TODO: what if the file is specified as polarized but no angle is given?
 
