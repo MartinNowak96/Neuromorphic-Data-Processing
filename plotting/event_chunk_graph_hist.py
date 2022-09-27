@@ -20,59 +20,77 @@ import plotting_utils.plotting_helper as plotting_helper
 def get_args() -> get_plotting_data.EventChunkConfig:
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
-    required_args = parser.add_argument_group('required unless using a config file')
-    flags = parser.add_argument_group('flags')
+    required_args = parser.add_argument_group("required unless using a config file")
+    flags = parser.add_argument_group("flags")
 
-    parser.add_argument('data_folder', type=str,
-                        help='Directory containing AEDAT data to be plotted')
+    parser.add_argument("data_folder", type=str, help="Directory containing AEDAT data to be plotted")
 
-    parser.add_argument('--config', '-c', type=str,
-                        help='Path to a config file')
+    parser.add_argument("--config", "-c", type=str, help="Path to a config file")
 
-    required_args.add_argument('--data_set_type', '-d', type=str,
-                               choices=['w', 'f', 'wf', 'b'],
-                               help='The type of data to be plotted where:\n'
-                                    'w = waveforms\n'
-                                    'f = frequencies\n'
-                                    'wf = waveforms and frequencies\n'
-                                    'b = backgrounds'
-                               )
+    required_args.add_argument(
+        "--data_set_type",
+        "-d",
+        type=str,
+        choices=["w", "f", "wf", "b"],
+        help="The type of data to be plotted where:\n"
+        "w = waveforms\n"
+        "f = frequencies\n"
+        "wf = waveforms and frequencies\n"
+        "b = backgrounds",
+    )
 
-    required_args.add_argument('--plot_constant', '-pc', type=str,
-                               help='The variable that is constant on the graph')
+    required_args.add_argument("--plot_constant", "-pc", type=str, help="The variable that is constant on the graph")
 
-    required_args.add_argument('--reconstruction_window', '-rw', type=int,
-                               help='The reconstruction window used to generate the csv files (µs)')
+    required_args.add_argument(
+        "--reconstruction_window", "-rw", type=int, help="The reconstruction window used to generate the csv files (µs)"
+    )
 
-    flags.add_argument('--show_figures', '-s', action='store_true',
-                       help='Show figures instead of displaying them')
+    flags.add_argument("--show_figures", "-s", action="store_true", help="Show figures instead of displaying them")
 
-    flags.add_argument('--plot_variance', '-pv', action='store_true',
-                       help='Calculate variance values')
+    flags.add_argument("--plot_variance", "-pv", action="store_true", help="Calculate variance values")
 
-    flags.add_argument('--plot_fwhm', '-pf', action='store_true',
-                       help='Calculate variance values')
+    flags.add_argument("--plot_fwhm", "-pf", action="store_true", help="Calculate variance values")
 
-    flags.add_argument('--log_values', '-l', action='store_true',
-                       help='Takes the log of all values')
+    flags.add_argument("--log_values", "-l", action="store_true", help="Takes the log of all values")
 
-    parser.add_argument('--graph_type', '-g', type=str, default='hist',
-                        choices=['hist', 'wavelets', 'kmeans', 'smooth'],
-                        help='The type of graph to be plotted')
+    parser.add_argument(
+        "--graph_type",
+        "-g",
+        type=str,
+        default="hist",
+        choices=["hist", "wavelets", "kmeans", "smooth"],
+        help="The type of graph to be plotted",
+    )
 
-    parser.add_argument('--fwhm_multiplier', '-fm', type=float, default=2.355,
-                        help='Used to change FHWM(2.355) to standard deviation(1)')
+    parser.add_argument(
+        "--fwhm_multiplier",
+        "-fm",
+        type=float,
+        default=2.355,
+        help="Used to change FHWM(2.355) to standard deviation(1)",
+    )
 
-    parser.add_argument('--max_event_count', '-mc', type=int, default=sys.maxsize,
-                        help='The maximum event count to read from the file')
+    parser.add_argument(
+        "--max_event_count", "-mc", type=int, default=sys.maxsize, help="The maximum event count to read from the file"
+    )
 
-    parser.add_argument('--gaussian_min_y', '-gmin', type=float, default=0.0,
-                        choices=plotting_helper.FloatRangeArg(0.0, 1.0),
-                        help='Minimum value on the gaussian y axis')
+    parser.add_argument(
+        "--gaussian_min_y",
+        "-gmin",
+        type=float,
+        default=0.0,
+        choices=plotting_helper.FloatRangeArg(0.0, 1.0),
+        help="Minimum value on the gaussian y axis",
+    )
 
-    parser.add_argument('--gaussian_max_y', '-gmax', type=float, default=1.0,
-                        choices=plotting_helper.FloatRangeArg(0.0, 1.0),
-                        help='Maximum value on the gaussian y axis')
+    parser.add_argument(
+        "--gaussian_max_y",
+        "-gmax",
+        type=float,
+        default=1.0,
+        choices=plotting_helper.FloatRangeArg(0.0, 1.0),
+        help="Maximum value on the gaussian y axis",
+    )
 
     args = parser.parse_args()
 
@@ -81,51 +99,73 @@ def get_args() -> get_plotting_data.EventChunkConfig:
         parser.error(f'argument data_folder: provided directory "{args.data_folder}" does not exist')
 
     # data_set_type, plot_constant, and reconstruction_window are not required when --config is used
-    if not args.config and (args.data_set_type is None or
-                            args.plot_constant is None or
-                            args.reconstruction_window is None):
-        parser.error('the following arguments are required: '
-                     '--data_set_type/-d, --plot_constant/-pc, --reconstruction_window/-rw')
+    if not args.config and (
+        args.data_set_type is None or args.plot_constant is None or args.reconstruction_window is None
+    ):
+        parser.error(
+            "the following arguments are required: "
+            "--data_set_type/-d, --plot_constant/-pc, --reconstruction_window/-rw"
+        )
 
     # The config argument cannot be used with data_set_type, plot_constant, or reconstruction_window
     if args.config and (args.data_set_type or args.plot_constant or args.reconstruction_window):
-        parser.error('the argument --config/-c conflicts with '
-                     '--data_set_type/-d, --plot_constant/-pc, and --reconstruction_window/-rw')
+        parser.error(
+            "the argument --config/-c conflicts with "
+            "--data_set_type/-d, --plot_constant/-pc, and --reconstruction_window/-rw"
+        )
 
     if args.config:
         # Make sure the config file exists
         if not os.path.isfile(args.config):
-            parser.error(f'argument --config/-c: provided file {args.config} does not exist')
+            parser.error(f"argument --config/-c: provided file {args.config} does not exist")
 
         return get_plotting_data.parseConfig(args.config, args.data_folder)
 
     # TODO: custom type like with gaussian min and max?
     if args.max_event_count <= 0:
-        parser.error(f'argument --max_event_count/-mc: invalid value: {args.max_event_count} '
-                     '(must be greater than 0)')
+        parser.error(
+            f"argument --max_event_count/-mc: invalid value: {args.max_event_count} " "(must be greater than 0)"
+        )
 
     return get_plotting_data.EventChunkConfig(
-        args.graph_type, args.data_folder, not args.show_figures, args.plot_variance,
-        args.fwhm_multiplier, args.log_values, args.plot_fwhm, args.data_set_type,
-        args.plot_constant, args.max_event_count, args.reconstruction_window,
-        args.gaussian_min_y, args.gaussian_max_y)
+        args.graph_type,
+        args.data_folder,
+        not args.show_figures,
+        args.plot_variance,
+        args.fwhm_multiplier,
+        args.log_values,
+        args.plot_fwhm,
+        args.data_set_type,
+        args.plot_constant,
+        args.max_event_count,
+        args.reconstruction_window,
+        args.gaussian_min_y,
+        args.gaussian_max_y,
+    )
 
 
 def clean_file_name(file_name: str, data_set_type: str) -> str:
     # Regex for name changes
-    file_name_changes = {"Event Chunks": "", "no ?pol": "NoPolarizer", "30 ?deg": "",
-                         "15min": "", "1hz": "", "-+": " ", " +": " "}
+    file_name_changes = {
+        "Event Chunks": "",
+        "no ?pol": "NoPolarizer",
+        "30 ?deg": "",
+        "15min": "",
+        "1hz": "",
+        "-+": " ",
+        " +": " ",
+    }
 
     for occurrence, replacement in file_name_changes.items():
         file_name = re.sub(occurrence, replacement, file_name)
 
-    if data_set_type in ('frequency', 'waveformsAndFrequency'):
-        file_name = file_name.replace('foam ', '')
+    if data_set_type in ("frequency", "waveformsAndFrequency"):
+        file_name = file_name.replace("foam ", "")
     else:
         # Remove frequency from folder name (why?)
         match = re.search("[0-9]+ ?[hH]z", file_name)
         if match is not None:
-            file_name = file_name.replace(match[0], '')
+            file_name = file_name.replace(match[0], "")
 
     return file_name
 
@@ -153,7 +193,7 @@ def plot_bars(ax_var: np.ndarray, event_lists: List, labels: List, titles: List,
     # Populate subplots
     for i in range(2):
         for j in range(3):
-            ax_var[j][i].tick_params(axis='x', which='major', labelsize=10, labelrotation=35)
+            ax_var[j][i].tick_params(axis="x", which="major", labelsize=10, labelrotation=35)
             axesVar[j][i].bar(next(labels_iter), next(event_lists_iter), color=next(colors_iter))
             axesVar[j][i].set_title(next(titles_iter) + title_extra)
 
@@ -283,13 +323,11 @@ waveformsNoPolFWHM = WaveformsNumbers()
 config = get_args()
 
 # Get all csv files inside of the data folder
-csv_paths = glob.glob(os.path.join('data', config.dataFolder, '**/*.csv'), recursive=True)
+csv_paths = glob.glob(os.path.join("data", config.dataFolder, "**/*.csv"), recursive=True)
 csv_paths = natsorted(csv_paths, alg=ns.IGNORECASE)
 
 for csv_path in csv_paths:
-    d: CsvData = get_plotting_data.read_aedat_csv(csv_path,
-                                                config.reconstructionWindow,
-                                                config.maxEventCount)
+    d: CsvData = get_plotting_data.read_aedat_csv(csv_path, config.reconstructionWindow, config.maxEventCount)
 
     if config.logValues:
         onAvg = np.array(d.y_on).mean()
@@ -327,25 +365,25 @@ for csv_path in csv_paths:
     lines = OnOffBothLines()
 
     # Off events
-    current_line = plotting_helper.plot_hist(d.y_off, axes, 1, 0, 'red', config.logValues)
+    current_line = plotting_helper.plot_hist(d.y_off, axes, 1, 0, "red", config.logValues)
     current_line.remove()
     offGuas.append(current_line)
     lines.off = current_line
 
     # On Events
-    current_line = plotting_helper.plot_hist(d.y_on, axes, 1, 1, 'green', config.logValues)
+    current_line = plotting_helper.plot_hist(d.y_on, axes, 1, 1, "green", config.logValues)
     current_line.remove()
     onGuas.append(current_line)
     lines.on = current_line
 
     # On & Off Events
-    current_line = plotting_helper.plot_hist(d.y_all, axes, 1, 2, 'blue', config.logValues)
+    current_line = plotting_helper.plot_hist(d.y_all, axes, 1, 2, "blue", config.logValues)
     current_line.remove()
     bothGuas.append(current_line)
     lines.both = current_line
 
-    if config.dataSetType == 'waveformsAndFrequency':
-        if 'NoPolarizer' in csv_filename:
+    if config.dataSetType == "waveformsAndFrequency":
+        if "NoPolarizer" in csv_filename:
             if "sine" in csv_filename:
                 waveformsNoPolLines.sine.append(lines)
             elif "square" in csv_filename:
@@ -369,15 +407,15 @@ for csv_path in csv_paths:
     bothLabel.append(csv_filename + " All Events")
 
     # Format & add data to scatter sub-plots
-    axes[0][0].scatter(d.time_windows, d.y_off, c='red', picker=True, s=1)
+    axes[0][0].scatter(d.time_windows, d.y_off, c="red", picker=True, s=1)
     axes[1][0].title.set_text(csv_filename + " Off Events")
-    axes[0][1].scatter(d.time_windows, d.y_on, c='green', picker=True, s=1)
+    axes[0][1].scatter(d.time_windows, d.y_on, c="green", picker=True, s=1)
     axes[1][1].title.set_text(csv_filename + " On Events")
-    axes[0][2].scatter(d.time_windows, d.y_all, c='blue', picker=True, s=1)
+    axes[0][2].scatter(d.time_windows, d.y_all, c="blue", picker=True, s=1)
 
     plt.title(csv_filename + " All Events")
 
-    if 'NoPolarizer' in csv_filename:
+    if "NoPolarizer" in csv_filename:
         noPolLabels.append(csv_filename.replace("NoPolarizer", ""))
     else:
         polLabels.append(csv_filename)
@@ -388,8 +426,8 @@ for csv_path in csv_paths:
         onOffBoth.on = np.var(d.y_on)
         onOffBoth.both = np.var(d.y_all)
 
-        if 'NoPolarizer' in csv_filename:
-            if config.dataSetType == 'waveformsAndFrequency':
+        if "NoPolarizer" in csv_filename:
+            if config.dataSetType == "waveformsAndFrequency":
                 if "sine" in csv_filename:
                     waveformsNoPolVariance.sine.append(onOffBoth)
                 elif "square" in csv_filename:
@@ -403,7 +441,7 @@ for csv_path in csv_paths:
                 allOnVarNoPol.append(np.var(d.y_on))
                 allBothVarNoPol.append(np.var(d.y_all))
         else:
-            if config.dataSetType == 'waveformsAndFrequency':
+            if config.dataSetType == "waveformsAndFrequency":
                 if "sine" in csv_filename:
                     waveformsPolVariance.sine.append(onOffBoth)
                 elif "square" in csv_filename:
@@ -425,8 +463,8 @@ for csv_path in csv_paths:
         onOffBoth.on = config.FWHMMultiplier * np.std(d.y_on)
         onOffBoth.both = config.FWHMMultiplier * np.std(d.y_all)
 
-        if 'NoPolarizer' in csv_filename:
-            if config.dataSetType == 'waveformsAndFrequency':
+        if "NoPolarizer" in csv_filename:
+            if config.dataSetType == "waveformsAndFrequency":
                 if "sine" in csv_filename:
                     waveformsNoPolFWHM.sine.append(onOffBoth)
                 elif "square" in csv_filename:
@@ -440,7 +478,7 @@ for csv_path in csv_paths:
                 allOnFWHMNoPol.append(config.FWHMMultiplier * np.std(d.y_on))
                 allBothFWHMNoPol.append(config.FWHMMultiplier * np.std(d.y_all))
         else:
-            if config.dataSetType == 'waveformsAndFrequency':
+            if config.dataSetType == "waveformsAndFrequency":
                 if "sine" in csv_filename:
                     waveformsFWHM.sine.append(onOffBoth)
                 elif "square" in csv_filename:
@@ -462,7 +500,7 @@ for csv_path in csv_paths:
 if not saveFigures:
     plt.show()
 
-if config.dataSetType == 'waveformsAndFrequency':
+if config.dataSetType == "waveformsAndFrequency":
     if config.plotConstant == "waveforms":
         labels = ["Sine", "Square", "Burst", "Triangle"]
         labelsNoPol = ["Sine NoPolarizer", "Square NoPolarizer", "Burst NoPolarizer", "Triangle NoPolarizer"]
@@ -507,7 +545,7 @@ if config.dataSetType == 'waveformsAndFrequency':
             plotting_helper.centerAllGuas(bothEventsNoPol, 2, labelsNoPol, "Both Events", axes, config)
 
             if saveFigures:
-                plt.savefig(os.path.join("results", "EventChunkGraphs", 'CenterGaus.png'))
+                plt.savefig(os.path.join("results", "EventChunkGraphs", "CenterGaus.png"))
                 plt.close()
             else:
                 plt.show()
@@ -534,7 +572,7 @@ if config.dataSetType == 'waveformsAndFrequency':
         plotting_helper.showAllGuas(bothEventsNoPol, labelsNoPol, 2, "Combined Events " + "Sine", axes, config)
 
         if saveFigures:
-            plt.savefig(os.path.join("results", "EventChunkGraphs", 'showAllGuasFrequencySine.png'))
+            plt.savefig(os.path.join("results", "EventChunkGraphs", "showAllGuasFrequencySine.png"))
             plt.close()
         else:
             plt.show()
@@ -547,7 +585,7 @@ else:
     plotting_helper.showAllGuas(bothGuas, bothLabel, 2, "Both Events", axes, config)
 
     if saveFigures:
-        plt.savefig(os.path.join("results", "EventChunkGraphs", 'Gaus.png'))
+        plt.savefig(os.path.join("results", "EventChunkGraphs", "Gaus.png"))
         plt.close()
     else:
         plt.show()
@@ -560,13 +598,13 @@ else:
     plotting_helper.centerAllGuas(bothGuas, 2, bothLabel, "Both Events", axes, config)
 
     if saveFigures:
-        plt.savefig(os.path.join("results", "EventChunkGraphs", 'CenterGaus.png'))
+        plt.savefig(os.path.join("results", "EventChunkGraphs", "CenterGaus.png"))
         plt.close()
     else:
         plt.show()
 
 if config.plotVariance:
-    if config.dataSetType == 'waveformsAndFrequency':
+    if config.dataSetType == "waveformsAndFrequency":
         if config.plotConstant == "waveforms":
             labels = ["Sine", "Square", "Burst", "Triangle"]
             speeds = ["200mV"]
@@ -584,13 +622,15 @@ if config.plotVariance:
 
                 using_log_values = "Log" if config.logValues else ""
 
-                axesVar = plot_bars(axesVar,
-                                    [offEventsPol, onEventsPol, bothEventsPol, offEventsNoPol, onEventsNoPol, bothEventsNoPol],
-                                    [labels],
-                                    ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
-                                    f" Polarized Variance {speed} {using_log_values}")
+                axesVar = plot_bars(
+                    axesVar,
+                    [offEventsPol, onEventsPol, bothEventsPol, offEventsNoPol, onEventsNoPol, bothEventsNoPol],
+                    [labels],
+                    ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
+                    f" Polarized Variance {speed} {using_log_values}",
+                )
 
-                plt.subplots_adjust(left=.125, bottom=0.1, right=.91, top=.9, wspace=.3, hspace=.4)
+                plt.subplots_adjust(left=0.125, bottom=0.1, right=0.91, top=0.9, wspace=0.3, hspace=0.4)
 
                 if saveFigures:
                     plt.savefig(os.path.join("results", "EventChunkGraphs", f"variance {speed}.png"))
@@ -603,13 +643,15 @@ if config.plotVariance:
 
         using_log_values = "Log" if config.logValues else ""
 
-        axesVar = plot_bars(axesVar,
-                            [allOffVarPol, allOnVarPol, allBothVarPol, allOffVarNoPol, allOnVarNoPol, allBothVarNoPol],
-                            [polLabels, noPolLabels],
-                            ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
-                            f" Polarized Variance {using_log_values}")
+        axesVar = plot_bars(
+            axesVar,
+            [allOffVarPol, allOnVarPol, allBothVarPol, allOffVarNoPol, allOnVarNoPol, allBothVarNoPol],
+            [polLabels, noPolLabels],
+            ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
+            f" Polarized Variance {using_log_values}",
+        )
 
-        plt.subplots_adjust(left=.125, bottom=0.1, right=.91, top=.9, wspace=.3, hspace=.4)
+        plt.subplots_adjust(left=0.125, bottom=0.1, right=0.91, top=0.9, wspace=0.3, hspace=0.4)
 
         if saveFigures:
             plt.savefig(os.path.join("results", "EventChunkGraphs", "variance.png"))
@@ -621,9 +663,11 @@ if config.plotFWHM:
     figureVar, axesVar = plt.subplots(nrows=3, ncols=2, sharex=False, sharey=False)
     figureVar.set_size_inches(10, 15)
 
-    logOrStandardDeviation = ("FWHM" if config.FWHMMultiplier == 2.355 else "Standard Deviation") + (" Log" if config.logValues else "")
+    logOrStandardDeviation = ("FWHM" if config.FWHMMultiplier == 2.355 else "Standard Deviation") + (
+        " Log" if config.logValues else ""
+    )
 
-    if config.dataSetType == 'waveformsAndFrequency':
+    if config.dataSetType == "waveformsAndFrequency":
         if config.plotConstant == "waveforms":
             speeds = ["200mV"]
             for i, speed in enumerate(speeds):
@@ -636,13 +680,15 @@ if config.plotFWHM:
                 onEventsNoPol: List[float] = waveformsNoPolFWHM.waveform_on_to_list(i)
                 bothEventsNoPol: List[float] = waveformsNoPolFWHM.waveform_both_to_list(i)
 
-                axesVar = plot_bars(axesVar,
-                                    [offEventsPol, onEventsPol, bothEventsPol, offEventsNoPol, onEventsNoPol, bothEventsNoPol],
-                                    [labels],
-                                    ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
-                                    f" Polarized {logOrStandardDeviation}")
+                axesVar = plot_bars(
+                    axesVar,
+                    [offEventsPol, onEventsPol, bothEventsPol, offEventsNoPol, onEventsNoPol, bothEventsNoPol],
+                    [labels],
+                    ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
+                    f" Polarized {logOrStandardDeviation}",
+                )
 
-                plt.subplots_adjust(left=.125, bottom=0.1, right=.91, top=.9, wspace=.3, hspace=.4)
+                plt.subplots_adjust(left=0.125, bottom=0.1, right=0.91, top=0.9, wspace=0.3, hspace=0.4)
 
                 if saveFigures:
                     plt.savefig(os.path.join("results", "EventChunkGraphs", f"{logOrStandardDeviation}{speed}.png"))
@@ -650,13 +696,15 @@ if config.plotFWHM:
                 else:
                     plt.show()
     else:
-        axesVar = plot_bars(axesVar,
-                            [allOffFWHMPol, allOnFWHMPol, allBothFWHMPol, allOffFWHMNoPol, allOnFWHMNoPol, allBothFWHMNoPol],
-                            [polLabels, noPolLabels],
-                            ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
-                            f" Polarized {logOrStandardDeviation}")
+        axesVar = plot_bars(
+            axesVar,
+            [allOffFWHMPol, allOnFWHMPol, allBothFWHMPol, allOffFWHMNoPol, allOnFWHMNoPol, allBothFWHMNoPol],
+            [polLabels, noPolLabels],
+            ["Off Events", "On Events", "Both Events", "Off Events Not", "On Events Not", "Both Events Not"],
+            f" Polarized {logOrStandardDeviation}",
+        )
 
-        plt.subplots_adjust(left=.125, bottom=0.1, right=.91, top=.9, wspace=.3, hspace=.4)
+        plt.subplots_adjust(left=0.125, bottom=0.1, right=0.91, top=0.9, wspace=0.3, hspace=0.4)
 
         if saveFigures:
             plt.savefig(os.path.join("results", "EventChunkGraphs", f"{logOrStandardDeviation}.png"))

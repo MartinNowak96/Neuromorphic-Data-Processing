@@ -6,7 +6,7 @@ import numpy as np
 import os
 import argparse
 
-path_arg: str = ''
+path_arg: str = ""
 blur_amount_arg: int = 0
 otsu_min_threshold_arg: int = 125
 
@@ -15,18 +15,23 @@ def get_args():
     global path_arg, blur_amount_arg, otsu_min_threshold_arg
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("image_path",
-                        help='Directory containing images to be processed or a path to an image to be processed', type=str)
-    parser.add_argument("--blur_amount", "-b",
-                        help='The amount the image will be gaussian blurred. (Must be an odd number) ', type=int, required=True)
-    parser.add_argument("--otsu_threshold", "-t",
-                        help='The minimum threshold for the otsu algorithm.', type=int)
+    parser.add_argument(
+        "image_path", help="Directory containing images to be processed or a path to an image to be processed", type=str
+    )
+    parser.add_argument(
+        "--blur_amount",
+        "-b",
+        help="The amount the image will be gaussian blurred. (Must be an odd number) ",
+        type=int,
+        required=True,
+    )
+    parser.add_argument("--otsu_threshold", "-t", help="The minimum threshold for the otsu algorithm.", type=int)
 
     args = parser.parse_args()
 
     # Check if image path exists and is an image file type
     if os.path.exists(args.image_path):
-        if not os.path.splitext(args.image_path)[1] in ['.png', '.jpeg', '.jpg']:
+        if not os.path.splitext(args.image_path)[1] in [".png", ".jpeg", ".jpg"]:
             sys.exit(f"ERROR: '{args.image_path}' is not an image.")
         else:
             path_arg = args.image_path
@@ -59,7 +64,7 @@ def otsu_and_blur(img: np.ndarray, blur_amount: int, otsu_min_threshold: int) ->
     return threshold_image
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_args()
 
     normal_image = cv2.imread(path_arg)

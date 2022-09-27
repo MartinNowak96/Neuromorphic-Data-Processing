@@ -8,42 +8,43 @@ from typing import List
 import sys
 from types import FunctionType
 
+
 class EventChunkConfig:
 
-    graphType:str
+    graphType: str
     '''hist, wavelets, kmeans, smooth buts lets be honest. its just hist '''
 
     saveFigures: bool
     ''' Saves the figures if set to True, Shows the figures if False '''
 
-    dataFolder:str
+    dataFolder: str
     '''The folder where the data is'''
-    plotVariance:bool
+    plotVariance: bool
     '''If true will calculate the variance values '''
-    plotFWHM:bool
+    plotFWHM: bool
     '''If true will calculate the FWHM '''
 
-    FWHMMultiplier:float
+    FWHMMultiplier: float
     ''' Used to change FHWM(2.355) to standard deviation(1)'''
 
-    logValues:bool
+    logValues: bool
     '''Logs all the values if true '''
 
-    dataSetType:str
+    dataSetType: str
     ''' waveforms, frequency, waveformsAndFrequency, or backgrounds'''
 
-    plotConstant:str
+    plotConstant: str
     ''' The variable that is constant on the graph '''
 
-    maxEventCount:int
+    maxEventCount: int
     ''' The max event count to read from the file '''
-    
-    reconstructionWindow:int
+
+    reconstructionWindow: int
     ''' The settings used to generate the csv files'''
 
-    gaussianMinY:float
+    gaussianMinY: float
 
-    gaussianMaxY:float
+    gaussianMaxY: float
 
     def __init__(self, graph_type='hist', data_folder='', save_figures=False, plot_variance=False,
                  fwhm_multiplier=2.355, log_values=False, plot_fwhm=False,

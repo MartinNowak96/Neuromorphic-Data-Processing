@@ -50,19 +50,23 @@ def paddBins(bins2: np.ndarray, paddTimes: int):
     # pad left & right
     difference = bins2[1] - bins2[0]
     for i in range(paddTimes):
-        bins2 = np.insert(bins2, 0, bins2[0] - (difference*(i+1)))
+        bins2 = np.insert(bins2, 0, bins2[0] - (difference * (i + 1)))
 
     for i in range(paddTimes):
-        bins2 = np.append(bins2, bins2[len(bins2)-1]+difference*(i+1))
+        bins2 = np.append(bins2, bins2[len(bins2) - 1] + difference * (i + 1))
 
     return bins2
 
 
-def plot_hist(data: list, axes, plot_major: int, plot_minor: int, plot_color: str, log_values: bool) -> matplotlib.lines.Line2D:
+def plot_hist(
+    data: list, axes, plot_major: int, plot_minor: int, plot_color: str, log_values: bool
+) -> matplotlib.lines.Line2D:
     """
     Plots only the hist.
     """
-    y, x, _ = axes[plot_major][plot_minor].hist(data, bins=100, color=plot_color, edgecolor=plot_color, linewidth=1.5, density=True)
+    y, x, _ = axes[plot_major][plot_minor].hist(
+        data, bins=100, color=plot_color, edgecolor=plot_color, linewidth=1.5, density=True
+    )
     x = paddBins(x, 100)
 
     (mu, sigma) = norm.fit(data)
@@ -73,13 +77,11 @@ def plot_hist(data: list, axes, plot_major: int, plot_minor: int, plot_color: st
     while y[0] < accuracy:
         y = np.delete(y, 0)
         x = np.delete(x, 0)
-    while y[len(y)-1] < accuracy:
-        y = np.delete(y, len(y)-1)
-        x = np.delete(x, len(x)-1)
+    while y[len(y) - 1] < accuracy:
+        y = np.delete(y, len(y) - 1)
+        x = np.delete(x, len(x) - 1)
 
-    l = axes[plot_major][plot_minor].plot(x, y, linewidth=2)
-
-    return l[0]
+    return axes[plot_major][plot_minor].plot(x, y, linewidth=2)[0]
 
 
 def find_clusters(X: list, n_clusters: int, rseed: int = 2) -> Tuple[list, np.ndarray]:
@@ -93,8 +95,7 @@ def find_clusters(X: list, n_clusters: int, rseed: int = 2) -> Tuple[list, np.nd
         labels = pairwise_distances_argmin(X, centers)
 
         # 2b. Find new centers from means of points
-        new_centers = np.array([X[labels == i].mean(0)
-                                for i in range(n_clusters)])
+        new_centers = np.array([X[labels == i].mean(0) for i in range(n_clusters)])
 
         # 2c. Check for convergence
         if np.all(centers == new_centers):
@@ -107,11 +108,18 @@ def find_clusters(X: list, n_clusters: int, rseed: int = 2) -> Tuple[list, np.nd
 def plotKmeans(data, axes, row, columnIndex, numberOfCenters):
     pts = np.asarray(data)
     centers, labels = find_clusters(pts, numberOfCenters)
-    axes[row][columnIndex].scatter(pts[:, 0], pts[:, 1], c=labels, s=10, cmap='viridis')
-    axes[row][columnIndex].scatter(centers[:, 0], centers[:, 1], c='red')
+    axes[row][columnIndex].scatter(pts[:, 0], pts[:, 1], c=labels, s=10, cmap="viridis")
+    axes[row][columnIndex].scatter(centers[:, 0], centers[:, 1], c="red")
 
 
-def centerAllGuas(lines: List[matplotlib.lines.Line2D], axes_index: int, labels: List[str], title: str, axes: np.ndarray, config: get_plotting_data.EventChunkConfig):
+def centerAllGuas(
+    lines: List[matplotlib.lines.Line2D],
+    axes_index: int,
+    labels: List[str],
+    title: str,
+    axes: np.ndarray,
+    config: get_plotting_data.EventChunkConfig,
+):
     labels_copy = np.copy(labels)
 
     max_height_pol = 0  # Get the largest y value in all the polarized lines
@@ -170,22 +178,31 @@ def centerAllGuas(lines: List[matplotlib.lines.Line2D], axes_index: int, labels:
         if "NoPolarizer" in labels_copy[i]:
             row = 1
             labels_copy[i] = labels_copy[i].replace(" NoPolarizer", "")
-            axes[axes_index][row].plot(line.get_xdata(), line.get_ydata(0) / max_height_nopol,
-                                       label=labels_copy[i].capitalize())
+            axes[axes_index][row].plot(
+                line.get_xdata(), line.get_ydata(0) / max_height_nopol, label=labels_copy[i].capitalize()
+            )
         else:
-            axes[axes_index][row].plot(line.get_xdata(), line.get_ydata(0) / max_height_pol,
-                                       label=labels_copy[i].capitalize())
+            axes[axes_index][row].plot(
+                line.get_xdata(), line.get_ydata(0) / max_height_pol, label=labels_copy[i].capitalize()
+            )
 
     axes[axes_index][1].title.set_text("Non-Polarized " + title)
     axes[axes_index][0].title.set_text("Polarized " + title)
-    axes[axes_index][0].legend(loc=1, prop={'size': 11})
-    axes[axes_index][1].legend(loc=1, prop={'size': 11})
+    axes[axes_index][0].legend(loc=1, prop={"size": 11})
+    axes[axes_index][1].legend(loc=1, prop={"size": 11})
 
     axes[axes_index][0].set_ylim(config.gaussianMinY, config.gaussianMaxY + 0.05)
     axes[axes_index][1].set_ylim(config.gaussianMinY, config.gaussianMaxY + 0.05)
 
 
-def showAllGuas(lines: List[matplotlib.lines.Line2D], labels: List[str], axes_index: int, title: str, axes: np.ndarray, config: get_plotting_data.EventChunkConfig):
+def showAllGuas(
+    lines: List[matplotlib.lines.Line2D],
+    labels: List[str],
+    axes_index: int,
+    title: str,
+    axes: np.ndarray,
+    config: get_plotting_data.EventChunkConfig,
+):
     labels_copy = np.copy(labels)
     max_height = 0
 
@@ -210,15 +227,15 @@ def showAllGuas(lines: List[matplotlib.lines.Line2D], labels: List[str], axes_in
 
     axes[axes_index][1].title.set_text("Non-Polarized " + title)
     axes[axes_index][0].title.set_text("Polarized " + title)
-    axes[axes_index][0].legend(loc=1, prop={'size': 11})
-    axes[axes_index][1].legend(loc=1, prop={'size': 11})
+    axes[axes_index][0].legend(loc=1, prop={"size": 11})
+    axes[axes_index][1].legend(loc=1, prop={"size": 11})
 
     axes[axes_index][0].set_ylim(config.gaussianMinY, config.gaussianMaxY + 0.05)
     axes[axes_index][1].set_ylim(config.gaussianMinY, config.gaussianMaxY + 0.05)
 
 
 def showFFT(data, file_count, folders):
-    fftX = np.linspace(0.0, 1.0/(2.0*(1.0 / 800.0)), file_count/2)
+    fftX = np.linspace(0.0, 1.0 / (2.0 * (1.0 / 800.0)), file_count / 2)
 
     polLabels = []
     polFreq = []
@@ -226,7 +243,7 @@ def showFFT(data, file_count, folders):
     noPolFreq = []
 
     for i, y in enumerate(data):
-        if("no pol" in folders[i]):
+        if "no pol" in folders[i]:
             noPolLabels.append(folders[i])
             noPolFreq.append(y)
         else:
@@ -236,13 +253,17 @@ def showFFT(data, file_count, folders):
         _, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True)
 
     for i, y in enumerate(polFreq):
-        axes[0].plot(fftX, 2.0/file_count * np.abs(y[:file_count//2]), label=polLabels[i].replace('Event Chunks', ''))
+        axes[0].plot(
+            fftX, 2.0 / file_count * np.abs(y[: file_count // 2]), label=polLabels[i].replace("Event Chunks", "")
+        )
 
     axes[0].set_xlim(2, 60)
     axes[0].legend()
 
     for i, y in enumerate(noPolFreq):
-        axes[1].plot(fftX, 2.0/file_count * np.abs(y[:file_count//2]), label=noPolLabels[i].replace('Event Chunks', ''))
+        axes[1].plot(
+            fftX, 2.0 / file_count * np.abs(y[: file_count // 2]), label=noPolLabels[i].replace("Event Chunks", "")
+        )
 
     axes[1].set_xlim(2, 60)
     axes[1].legend()
@@ -253,13 +274,13 @@ def showFFT(data, file_count, folders):
 def plotSpectrum(y, Fs):
     n = len(y)  # length of the signal
     k = arange(n)
-    T = n/Fs
-    frq = k/T  # two sides frequency range
-    frq = frq[range(int(n/2))]  # one side frequency range
+    T = n / Fs
+    frq = k / T  # two sides frequency range
+    frq = frq[range(int(n / 2))]  # one side frequency range
 
-    Y = fft(y)/n  # fft computing and normalization
-    Y = Y[int(range(n/2))]
+    Y = fft(y) / n  # fft computing and normalization
+    Y = Y[int(range(n / 2))]
 
-    plot(frq, abs(Y), 'r')  # plotting the spectrum
-    xlabel('Freq (Hz)')
-    ylabel('|Y(freq)|')
+    plot(frq, abs(Y), "r")  # plotting the spectrum
+    xlabel("Freq (Hz)")
+    ylabel("|Y(freq)|")

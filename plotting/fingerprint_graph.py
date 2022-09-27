@@ -118,8 +118,8 @@ if __name__ == '__main__':
     max_csv_entries = int((x_lim * 1000000) / reconstruction_window) if x_lim is not None else -1
 
     plot_data: CsvData = get_plotting_data.read_aedat_csv(file_to_plot,
-                                                        reconstruction_window,
-                                                        max_csv_entries)
+                                                          reconstruction_window,
+                                                          max_csv_entries)
 
     plot_event_count(plot_data.y_off, plot_data.time_windows, 'r', x_lim,
                      f"{waveform_type}{voltage}{hz}{degrees}"
