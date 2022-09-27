@@ -4,9 +4,8 @@ from os import listdir
 from os.path import isfile, join
 import json
 import itertools
-from typing import List
+from typing import Callable, List
 import sys
-from types import FunctionType
 
 
 class EventChunkConfig:
@@ -90,7 +89,7 @@ class SpatialCsvData():
         self.y_positions: List[int] = []
         self.timestamps: List[int] = []
 
-        self.__polarity_storage_callbacks: List[FunctionType] = []
+        self.__polarity_storage_callbacks: List[Callable[[bool], None]] = []
 
         if polarity_as_color:
             self.__polarity_storage_callbacks.append(self.__store_polarity_color)
@@ -98,12 +97,13 @@ class SpatialCsvData():
         if polarity_as_bool:
             self.__polarity_storage_callbacks.append(self.__store_polarity_bool)
 
-    def __store_polarity_bool(self, polarity):
+    def __store_polarity_bool(self, polarity: bool):
         self.polarities.append(polarity)
 
-    def __store_polarity_color(self, polarity):
+    def __store_polarity_color(self, polarity: bool):
         self.polarities_color.append('g' if polarity == 1 else 'r')
 
+    @staticmethod
     def from_csv(csv_file: str, polarity_as_bool: bool, polarity_as_color: bool,
                  time_limit: int = sys.maxsize):
         first_timestamp = 0
@@ -122,6 +122,10 @@ class SpatialCsvData():
                                  "Header should be On/Off,X,Y,Timestamp")
 
             first_row = next(reader, None)
+
+            if first_row is None:
+                raise ValueError(f"CSV file '{csv_file}' seems to be empty")
+
             first_timestamp = int(first_row[3])
 
             for row in itertools.chain([first_row], reader):
@@ -149,10 +153,10 @@ class SpatialCsvData():
 
 # TODO: indicate that this is for chunk CSVs
 def read_aedat_csv(csv_path: str, timeWindow: int, maxSize: int = -1) -> CsvData:
-    x = []
-    y_on = []
-    y_off = []
-    y_all = []
+    x: List[int] = []
+    y_on: List[int] = []
+    y_off: List[int] = []
+    y_all: List[int] = []
 
     if not os.path.exists(csv_path):
         raise FileNotFoundError(f"CSV file could not be found: {csv_path}")
@@ -161,6 +165,9 @@ def read_aedat_csv(csv_path: str, timeWindow: int, maxSize: int = -1) -> CsvData
         reader = csv.reader(csvfile, delimiter=',')
         header = next(reader, None)  # Grab header
 
+        if header is None:
+            raise ValueError(f"CSV file '{csv_path}' seems to be empty")
+
         # Make sure CSV is the correct format
         for entry in header:
             if 'count' not in entry.lower():
@@ -168,13 +175,13 @@ def read_aedat_csv(csv_path: str, timeWindow: int, maxSize: int = -1) -> CsvData
                                  "Header entries should indicate that the columns contain event counts")
 
         for i, row in enumerate(reader):
-            x.append((i-1) * timeWindow * 0.000001)
+            x.append(int((i-1) * timeWindow * 0.000001))
             # TODO: If timewindow is large this will not work
             # also machineLearning Get data might need this fix for outliers
             if int(row[2]) > 8000:  # If camera bugs out and registers too many events, use like data instead
-                y_on.append(sum(y_on)/len(y_on))
-                y_off.append(sum(y_off)/len(y_off))
-                y_all.append(sum(y_all)/len(y_all))
+                y_on.append(sum(y_on)//len(y_on))
+                y_off.append(sum(y_off)//len(y_off))
+                y_all.append(sum(y_all)//len(y_all))
             else:
                 y_on.append(int(row[0]))
                 y_off.append(int(row[1]))
