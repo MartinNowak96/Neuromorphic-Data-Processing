@@ -11,6 +11,9 @@ imageData/
 # pytest files
 .coverage
 
+# Tox files
+.tox
+
 # Data files
 *.npy
 *.csv
