@@ -7,14 +7,13 @@ import os
 import sys
 
 
-pixel_x = None
-pixel_y = None
+pixel_x = -1
+pixel_y = -1
 
-area_size = None
+area_size = -1
 max_plot_points = float("inf")
 
-csv_filename = None
-
+csv_filename = ''
 save_directory = ''
 
 
@@ -81,7 +80,7 @@ if __name__ == "__main__":
                 if (pixel_state != last_pixel_state):
                     reset_pixel = False
                     last_pixel_state = pixel_state
-                    change_timestamps.append(int(row[3]))
+                    change_timestamps.append(float(row[3]))
                     if len(change_timestamps) > max_plot_points:
                         print(redundancies, "broken")
 

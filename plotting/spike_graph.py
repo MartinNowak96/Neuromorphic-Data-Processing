@@ -12,6 +12,7 @@ import argparse
 import os
 import itertools
 import re
+from typing import List
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 from plotting_utils.plotting_helper import check_aedat_csv_format
@@ -21,9 +22,9 @@ file_to_plot = ''
 time_limit = math.inf
 use_global_area = False
 manual_title = None
-pixel_x = None
-pixel_y = None
-area_size = None
+pixel_x = -1
+pixel_y = -1
+area_size = -1
 save_directory = ''
 
 
@@ -80,13 +81,15 @@ def get_args():
 
 def get_activity_area(csv_file, pixel_x: int, pixel_y: int, area_size: int, max_points: int = sys.maxsize,
                       time_limit: float = math.inf):
-    points = []
+    points: List[List[int]] = []
     first_timestamp = 0
 
     with open(csv_file, 'r', encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
 
         header = next(reader, None)  # Grab the header
+        if header is None:
+            raise ValueError(f"Error: File '{csv_file}' seems to be empty")
 
         # Strip whitespace from header if there is any
         header = [x.strip(' ') for x in header]
@@ -101,6 +104,9 @@ def get_activity_area(csv_file, pixel_x: int, pixel_y: int, area_size: int, max_
         timestamp_index = header.index('Timestamp')
 
         first_row = next(reader, None)
+        if first_row is None:
+            raise ValueError(f"Error: File '{csv_file}' has a header but contains no data")
+
         first_timestamp = int(first_row[timestamp_index])
 
         if time_limit != math.inf:
@@ -110,7 +116,7 @@ def get_activity_area(csv_file, pixel_x: int, pixel_y: int, area_size: int, max_
             x_pos = int(row[x_index])
             y_pos = 128 - int(row[y_index])
 
-            timestamp = float(int(row[3]) - first_timestamp)
+            timestamp = int(row[3]) - first_timestamp
             if timestamp > time_limit:
                 return points
 
@@ -150,7 +156,7 @@ if __name__ == '__main__':
     file_path = file_to_plot
 
     if use_global_area:
-        plot_points = get_activity_area(file_to_plot, 999, 999, 999, time_limit=time_limit)
+        plot_points = get_activity_area(file_to_plot, 999, 999, 9999, time_limit=time_limit)
     else:
         plot_points = get_activity_area(file_path, pixel_x, pixel_y, area_size, time_limit=time_limit)
 

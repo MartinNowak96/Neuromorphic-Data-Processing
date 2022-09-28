@@ -32,7 +32,7 @@ class FloatRangeArg(object):
             raise IndexError()
 
 
-def check_aedat_csv_format(csv_header: list, required_data: list) -> bool:
+def check_aedat_csv_format(csv_header: List[str], required_data: List[str]) -> bool:
     return set(required_data).issubset(set(csv_header))
 
 
@@ -59,7 +59,7 @@ def paddBins(bins2: np.ndarray, paddTimes: int):
 
 
 def plot_hist(
-    data: list, axes, plot_major: int, plot_minor: int, plot_color: str, log_values: bool
+    data: List, axes, plot_major: int, plot_minor: int, plot_color: str, log_values: bool
 ) -> matplotlib.lines.Line2D:
     """
     Plots only the hist.
@@ -84,7 +84,7 @@ def plot_hist(
     return axes[plot_major][plot_minor].plot(x, y, linewidth=2)[0]
 
 
-def find_clusters(X: list, n_clusters: int, rseed: int = 2) -> Tuple[list, np.ndarray]:
+def find_clusters(X: np.ndarray, n_clusters: int, rseed: int = 2) -> Tuple[np.ndarray, np.ndarray]:
     # 1. Randomly choose clusters
     rng = np.random.RandomState(rseed)
     i = rng.permutation(X.shape[0])[:n_clusters]
@@ -105,7 +105,7 @@ def find_clusters(X: list, n_clusters: int, rseed: int = 2) -> Tuple[list, np.nd
     return centers, labels
 
 
-def plotKmeans(data, axes, row, columnIndex, numberOfCenters):
+def plotKmeans(data, axes, row: int, columnIndex: int, numberOfCenters: int):
     pts = np.asarray(data)
     centers, labels = find_clusters(pts, numberOfCenters)
     axes[row][columnIndex].scatter(pts[:, 0], pts[:, 1], c=labels, s=10, cmap="viridis")
@@ -119,6 +119,7 @@ def centerAllGuas(
     title: str,
     axes: np.ndarray,
     config: get_plotting_data.EventChunkConfig,
+    smart_shifting: bool = False,
 ):
     labels_copy = np.copy(labels)
 
@@ -141,7 +142,7 @@ def centerAllGuas(
         offset = line.get_xdata()[index[0][0]]
         row = 0
 
-        if False:
+        if smart_shifting:
             # TODO: fine control for automatic centering not working
             if line.get_ydata(0)[index[0][0] - 1] > offset:
                 diff_low = line.get_xdata()[index[0][0] - 1] - offset
@@ -157,7 +158,7 @@ def centerAllGuas(
                 offset = offset + (offset - diff_high) / 2
             else:
                 offset = offset - (offset - diff_low) / 2
-        elif True:
+        else:
             # FIXME: manual shifting for now
             if "NoPolarizer" in labels_copy[i]:
                 if "burst" in labels_copy[i]:
@@ -276,10 +277,10 @@ def plotSpectrum(y, Fs):
     k = arange(n)
     T = n / Fs
     frq = k / T  # two sides frequency range
-    frq = frq[range(int(n / 2))]  # one side frequency range
+    frq = frq[range(n // 2)]  # one side frequency range
 
     Y = fft(y) / n  # fft computing and normalization
-    Y = Y[int(range(n / 2))]
+    Y = Y[range(n // 2)]
 
     plot(frq, abs(Y), "r")  # plotting the spectrum
     xlabel("Freq (Hz)")
