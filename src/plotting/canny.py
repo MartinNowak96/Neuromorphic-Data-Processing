@@ -7,8 +7,8 @@ import sys
 
 show_plot = True
 save_fig = False
-image_path = ''
-save_directory = ''
+image_path = ""
+save_directory = ""
 
 
 def get_args():
@@ -16,10 +16,10 @@ def get_args():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('image_path', help='path to image to perform edge detection on', type=str)
-    parser.add_argument('--hide_plot', '-h', help='prevents the plot from being shown', action='store_true')
-    parser.add_argument('--save_fig', '-s', help='saves the figure to disk', action='store_true')
-    parser.add_argument("--save_directory", '-d', help="Save file to directory", type=str)
+    parser.add_argument("image_path", help="path to image to perform edge detection on", type=str)
+    parser.add_argument("--hide_plot", "-hp", help="prevents the plot from being shown", action="store_true")
+    parser.add_argument("--save_fig", "-s", help="saves the figure to disk", action="store_true")
+    parser.add_argument("--save_directory", "-d", help="Save file to directory", type=str)
 
     args = parser.parse_args()
 
@@ -34,21 +34,21 @@ def get_args():
     image_path = args.image_path
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_args()
 
     img = cv2.imread(image_path, 0)
     edges = cv2.Canny(img, 100, 200)
 
-    plt.subplot(121), plt.imshow(img, cmap='gray')
-    plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-    plt.subplot(122), plt.imshow(edges, cmap='gray')
-    plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+    plt.subplot(121), plt.imshow(img, cmap="gray")
+    plt.title("Original Image"), plt.xticks([]), plt.yticks([])
+    plt.subplot(122), plt.imshow(edges, cmap="gray")
+    plt.title("Edge Image"), plt.xticks([]), plt.yticks([])
 
     image_name = os.path.splitext(ntpath.basename(image_path))[0]
 
     if save_fig:
-        plt.savefig(os.path.join(save_directory, f'Canny-{image_name}.png'))
+        plt.savefig(os.path.join(save_directory, f"Canny-{image_name}.png"))
 
     if show_plot:
         plt.show()

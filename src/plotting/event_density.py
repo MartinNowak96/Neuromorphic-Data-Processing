@@ -1,5 +1,6 @@
 import csv
 from itertools import islice
+import matplotlib
 import matplotlib.pyplot as plt
 from plotting_utils import filename_regex
 import argparse
@@ -13,8 +14,8 @@ pixel_y = -1
 area_size = -1
 max_plot_points = float("inf")
 
-csv_filename = ''
-save_directory = ''
+csv_filename = ""
+save_directory = ""
 
 
 def get_args():
@@ -27,7 +28,7 @@ def get_args():
     parser.add_argument("--pixel_y", "-y", help="y coordinate of desired pixel", type=int, required=True)
     parser.add_argument("--area_size", "-a", help="size of box around pixel to observe", type=int, required=True)
     parser.add_argument("--max_plot_points", "-m", help="max number of points to plot", type=int)
-    parser.add_argument("--save_directory", '-d', help="Save file to directory", type=str)
+    parser.add_argument("--save_directory", "-d", help="Save file to directory", type=str)
 
     args = parser.parse_args()
 
@@ -56,18 +57,19 @@ def get_args():
 
 if __name__ == "__main__":
     get_args()
+    matplotlib.use("Qt5Agg")
 
     last_pixel_state = None
-    redundancies = 0    # TODO: do redundancies for all pixels
+    redundancies = 0  # TODO: do redundancies for all pixels
     reset_pixel = True
 
     change_timestamps = []  # The times when the pixel changed state
-    time_between = []       # The times between the state changes
+    time_between = []  # The times between the state changes
 
     with open(csv_filename) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter=",")
 
-        for row in islice(csv_reader, 1, None):     # Skip the header
+        for row in islice(csv_reader, 1, None):  # Skip the header
             x_row = int(row[1])
             y_row = int(row[2])
 
@@ -75,9 +77,9 @@ if __name__ == "__main__":
             check_y = abs(y_row - pixel_y)
 
             if check_x < area_size and check_y < area_size:
-                pixel_state = (row[0] == 'True') or (row[0] == '1')
+                pixel_state = (row[0] == "True") or (row[0] == "1")
 
-                if (pixel_state != last_pixel_state):
+                if pixel_state != last_pixel_state:
                     reset_pixel = False
                     last_pixel_state = pixel_state
                     change_timestamps.append(float(row[3]))
@@ -99,12 +101,12 @@ if __name__ == "__main__":
 
     # Add lines to plot
     for stamp in change_timestamps:
-        plt.plot([stamp, stamp], [0, 1], 'b')
+        plt.plot([stamp, stamp], [0, 1], "b")
 
     plt.ylim(0, 1.2)
     plt.yticks([])
-    plt.title('Temporal Resoltion')
-    plt.xlabel('Time(mS)')
+    plt.title("Temporal Resoltion")
+    plt.xlabel("Time(mS)")
 
     hz = filename_regex.parse_frequency(csv_filename, "Hz_")
     voltage = filename_regex.parse_voltage(csv_filename, "V_")

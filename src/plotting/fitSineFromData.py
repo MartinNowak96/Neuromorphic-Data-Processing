@@ -5,7 +5,8 @@ import plotting_utils.get_plotting_data as get_plotting_data
 from scipy.signal import savgol_filter
 
 
-def optimize_func(x): return x[0] * np.sin(x[1] * t + x[2]) + x[3] - data
+def optimize_func(x):
+    return x[0] * np.sin(x[1] * t + x[2]) + x[3] - data
 
 
 N = 1000  # number of data points

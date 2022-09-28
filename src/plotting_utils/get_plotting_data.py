@@ -68,12 +68,12 @@ class EventChunkConfig:
 # TODO: rename to CsvChunkData
 class CsvData:
     file_name: str
-    time_windows: List[int]
+    time_windows: List[float]
     y_on: List[int]
     y_off: List[int]
     y_all: List[int]
 
-    def __init__(self, file_name: str, time_windows: List[int], y_on: List[int], y_off: List[int], y_all: List[int]):
+    def __init__(self, file_name: str, time_windows: List[float], y_on: List[int], y_off: List[int], y_all: List[int]):
         self.file_name = file_name
         self.time_windows = time_windows
         self.y_on = y_on
@@ -153,7 +153,7 @@ class SpatialCsvData():
 
 # TODO: indicate that this is for chunk CSVs
 def read_aedat_csv(csv_path: str, timeWindow: int, maxSize: int = -1) -> CsvData:
-    x: List[int] = []
+    x: List[float] = []
     y_on: List[int] = []
     y_off: List[int] = []
     y_all: List[int] = []
@@ -175,7 +175,7 @@ def read_aedat_csv(csv_path: str, timeWindow: int, maxSize: int = -1) -> CsvData
                                  "Header entries should indicate that the columns contain event counts")
 
         for i, row in enumerate(reader):
-            x.append(int((i-1) * timeWindow * 0.000001))
+            x.append((i-1) * timeWindow * 0.000001)
             # TODO: If timewindow is large this will not work
             # also machineLearning Get data might need this fix for outliers
             if int(row[2]) > 8000:  # If camera bugs out and registers too many events, use like data instead

@@ -10,6 +10,7 @@ import os
 import sys
 import argparse
 from typing import Optional
+import matplotlib
 import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
@@ -108,6 +109,7 @@ def plot_event_count(event_counts: list, t: list, line_color: str, max_plot_entr
 
 if __name__ == "__main__":
     get_args()
+    matplotlib.use("Qt5Agg")
 
     file_name = os.path.basename(file_to_plot)
 
