@@ -77,5 +77,5 @@ if __name__ == "__main__":
     file_name = os.path.splitext(file_name)[0]  # Strip off file extension
 
     plt.savefig(
-        os.path.join(save_directory, f"SpectralClustering-{file_to_plot}.png"), bbox_inches="tight", pad_inches=0
+        os.path.join(save_directory, f"SpectralClustering-{file_name}.png"), bbox_inches="tight", pad_inches=0
     )
